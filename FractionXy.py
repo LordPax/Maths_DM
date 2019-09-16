@@ -85,12 +85,29 @@ def FracAff(F) :
 # 0 si F1=F2
 #La fonction gère aussi les infinis (cad dénominateur nul)
 def FracComp(F1,F2) :
-	res=FracZero()
-	return 0
+	F1 = FracEval(F1)
+	F2 = FracEval(F2)
+
+	if F1 < F2 :
+		return -1
+	elif F1 > F2 :
+		return 1
+	else :
+		return 0
 
 #Calcul le PGCD de deux entiers
-def FracPGCD(a,b) : 
-	return 1
+def FracPGCD(a, b) : 
+	#a = FracEval(a)
+	#b = FracEval(b)
+	res = None
+
+	while res != 0 :
+		if res != None : a = res
+		if a < b : a, b = b, a
+		res = round(a - b, 1)
+		print(a, "-", b, "=", res)
+
+	return a
 
 #Renvoie la fraction simplifiée par le PGCD, et dénominateur toujours positif
 def FracSimplif(F) :
@@ -128,7 +145,6 @@ def FracDiv(F1, F2) :
 	return res
 	
 	
-"""
 #Pour les tests
 
 X=FracZero()
@@ -139,12 +155,19 @@ Y=FracZero()
 Y[0]=9
 Y[1]=-4
 
+a, b = 59.65, 48.45
+
 print("X="+FracAff(X)+"="+FracAff(FracSimplif(X)))
 print("Y="+FracAff(Y)+"="+FracAff(FracSimplif(Y)))
+print("X = " + str(FracEval(X)))
+print("Y = " + str(FracEval(Y)))
+print("X comp Y = "+ str(FracComp(X, Y)))
+print("Y comp X = "+ str(FracComp(Y, X)))
+print("X comp X = "+ str(FracComp(X, X)))
+print("PGCD(a, b) = " + str(FracPGCD(a, b)))
 print("X+Y="+FracAff(FracAdd(X,Y)))
 print("X-Y="+FracAff(FracSous(X,Y)))
 print("X+1="+FracAff(FracAdd(X,1)))
 print("2Y="+FracAff(FracProd(2,Y)))
 print("2X="+FracAff(FracProd(2,X)))
 print("X^2/Y="+FracAff(FracDiv(FracProd(X,X),Y)))
-#"""
