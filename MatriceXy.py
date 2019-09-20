@@ -73,45 +73,100 @@ def MatAff(M) :
 		i=i+1
 	return res
 
-	
-#Matrice identité
+#Matrice identité (OK)
 def MatId(n) :
+	n = int(n)
 	res=MatZero(n)
+	
+	for i in range(n) :
+		for j in range(n) :
+			if i == j :
+				res[i][j] = 1
+			else :
+				res[i][j] = 0
+			
 	return res
 	
-#Renvoie la somme de A et B
+#Renvoie la somme de A et B (OK)
 def MatAdd(A, B) :
-	res=MatZero(n)
+	nA, mA, nB, mB = len(A), len(A[0]), len(B), len(B[0])
+	res = MatZero(nA, mA)
+	if nA == mA and nB == mB and nA == nB :
+		for i in range(nA) :
+			for j in range(nA) :
+				res[i][j] = A[i][j] + B[i][j]
+	
 	return res
 	
-#Renvoie le produit de la matrice A par le nombre réel X
+#Renvoie le produit de la matrice A par le nombre réel X (OK)
 def MatProdX(A, X) :
-	res=MatZero(n)
+	nA, mA = len(A), len(A[0])
+	res = MatZero(nA, mA)
+	for i in range(nA) :
+		for j in range(mA) :
+			res[i][j] += A[i][j] * X
 	return res
 	
-#Renvoie l'opposé de la matrice A
+#Renvoie l'opposé de la matrice A (OK)
 def MatOpp(A) :
-	res=MatZero(n)
+	nA, mA = len(A), len(A[0])
+	res = MatZero(nA, mA)
+	for i in range(nA) :
+		for j in range(mA) :
+			res[i][j] += A[i][j] * -1
 	return res
 	
-#Renvoie la différence de A et B
+#Renvoie la différence de A et B (OK)
 def MatSous(A,B) : 
-	res=MatZero(n)
+	nA, mA, nB, mB = len(A), len(A[0]), len(B), len(B[0])
+	res = MatZero(nA, mA)
+	if nA == mA and nB == mB and nA == nB :
+		for i in range(nA) :
+			for j in range(nA) :
+				res[i][j] = A[i][j] - B[i][j]
+	
 	return res
 	
-#Renvoie le produit A*B
+#Renvoie le produit A*B (OK)
 def MatProd(A, B) :
-	res=MatZero(n)
+	nA, mA, mB, pB = len(A), len(A[0]), len(B), len(B[0])
+	res = MatZero(mA)
+	if nA == pB and mA == mB :
+		for i in range(nA) :
+			for j in range(pB) :
+				for k in range(mA) :
+					res[i][j] += A[i][k] * B[k][j]
 	return res
 	
 #Renvoie la matrice transposée
 def MatTransp(A) : 
-	res=MatZero(n)
+	nA, mA = len(A), len(A[0])
+	res = MatZero(nA)
+	if nA == mA :
+		for i in range(nA) :
+			for j in range(nA) :
+				if i != j :
+					res[i][j] = A[j][i]
+				else :
+					res[i][j] = A[i][j]
 	return res
 
 #Renvoie le mineur
 def MatMineur(A,p,q) : 
-	res=MatZero(n)
+	nA, mA = len(A), len(A[0])
+	nA2 = nA - 1
+	res = MatZero(nA2)
+	if nA == mA :
+		for i in range(nA) :
+			for j in range(nA) :
+				if i < p and j < q :
+					res[i][j] = res[i][j]
+				else i < p and j >= q :
+					res[i][j] = res[i][j+1]
+				else i >= p and j < q :
+					res[i][j] = res[i+1][j]
+				else i >= p and j >= q :
+					res[i][j] = res[i+1][j+1]
 	return res
 
 #Calcul le déterminant de A
@@ -139,7 +194,7 @@ def MatInv(A) :
 def MatPuiss(A,p) :
 	return A
 	
-"""
+
 #Pour les test
 M=MatZero(3)
 M[0][0]=2
@@ -157,12 +212,18 @@ M[2][2]=1
 print("M=\n"+MatAff(M))
 print("Id3=\n"+MatAff(MatId(3)))
 print("M+Id3=\n"+MatAff(MatAdd(M, MatId(3))))
+print("M*5=\n"+MatAff(MatProdX(M, 5)))
+print("opp(M)=\n"+MatAff(MatOpp(M)))
+print("M*Id3=\n"+MatAff(MatProd(M, MatId(3))))
+print("transp(M)=\n"+MatAff(MatTransp(M)))
 print("Id3-M=\n"+MatAff(MatSous(MatId(3),M)))
-print("La transposée de M est \n"+MatAff(MatTransp(M)))
-print("Le mineur M1,2 \n"+MatAff(MatMineur(M,0,1)))
-print("Le mineur M2,2 \n"+MatAff(MatMineur(M,1,1)))
-print("det(M)="+FracAff(MatDet(M)))
-print("L'inverse de M est\n"+MatAff(MatInv(M)))
-print("M*M^{-1}=\n"+MatAff(MatProd(M,MatInv(M))))
-print("M^{-1}*M=\n"+MatAff(MatProd(MatInv(M),M)))
-#"""
+#print("Le mineur M1,2 \n"+MatAff(MatMineur(M,0,1)))
+#print("Le mineur M2,2 \n"+MatAff(MatMineur(M,1,1)))
+
+#print("La transposée de M est \n"+MatAff(MatTransp(M)))
+
+#print("det(M)="+FracAff(MatDet(M)))
+#print("L'inverse de M est\n"+MatAff(MatInv(M)))
+#print("M*M^{-1}=\n"+MatAff(MatProd(M,MatInv(M))))
+#print("M^{-1}*M=\n"+MatAff(MatProd(MatInv(M),M)))
+#

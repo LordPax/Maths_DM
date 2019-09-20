@@ -62,6 +62,7 @@ def FracPlonge(X) :
 	
 #renvoie la valeur (réel) de la fraction en paramètre (faite)
 def FracEval(F) : 
+	F=FracPlonge(F)
 	try : 
 		num=F[0]
 		den=F[1]
@@ -85,66 +86,103 @@ def FracAff(F) :
 # 0 si F1=F2
 #La fonction gère aussi les infinis (cad dénominateur nul)
 def FracComp(F1,F2) :
-	F1 = FracEval(F1)
-	F2 = FracEval(F2)
-
-	if F1 < F2 :
-		return -1
-	elif F1 > F2 :
-		return 1
+	res=FracZero()
+	F1=FracPlonge(F1)
+	F2=FracPlonge(F2)
+	try : 	
+		num1=F1[0]
+		num2=F2[0]
+		den1=F1[1]
+		den2=F2[1]
+	except : return 0
+	x1=FracEval(F1)
+	x2=FracEval(F2)
+	if(den1==0) :
+		if(den2==0) :
+			if(num1<=0 and num2<=0) : return 0
+			if(num1<=0 and num2>0) : return -1
+			if(num1>0 and num2<=0) : return 1
+			if(num1>0 and num2>0) : return 0
+		else :
+			if(num1<=0) : return -1
+			return 1
 	else :
-		return 0
+		if(den2==0):
+			if(num2<=0) : return 1
+			return -1
+		
+	if(x1<x2) : return -1
+	if(x1>x2) : return 1
+	return 0
 
 #Calcul le PGCD de deux entiers
-def FracPGCD(a, b) : 
-	#a = FracEval(a)
-	#b = FracEval(b)
-	res = None
-
-	while res != 0 :
-		if res != None : a = res
-		if a < b : a, b = b, a
-		res = round(a - b, 1)
-		print(a, "-", b, "=", res)
-
-	return a
+def FracPGCD(a,b) : 
+	if(a<0) : return FracPGCD(-a,b)
+	if(b<0) : return FracPGCD(a,-b)
+	if(a==0) : return b
+	if(b==0) : return a
+	return(FracPGCD(b, a%b))
 
 #Renvoie la fraction simplifiée par le PGCD, et dénominateur toujours positif
 def FracSimplif(F) :
+	F=FracPlonge(F)
+	try : 
+		num=F[0]
+		den=F[1]
+	except : return F
+	p=FracPGCD(num, den)
 	res=FracZero()
+	res[0]=num//p#res[0]=int(num/p)
+	res[1]=den//p
+	if(res[1]<0) :
+		res[0]=-res[0]
+		res[1]=-res[1]
 	return res
 
 #Calcul et simplifie l'addition de deux fractions
 def FracAdd(F1, F2) : 
+	F1=FracPlonge(F1)
+	F2=FracPlonge(F2)
 	res=FracZero()
-	return res
+	res[0]=F1[0]*F2[1]+F2[0]*F1[1]
+	res[1]=F1[1]*F2[1]
+	return FracSimplif(res)
 	
 #Renvoie l'opposé d'une fraction
 def FracOpp(F) : 
+	F=FracPlonge(F)
 	res=FracZero()
+	res[0]=-F[0]
+	res[1]=F[1]
 	return res
 	
 #Renvoie la différence entre F1 et F2
 def FracSous(F1, F2) :  
-	res=FracZero()
-	return res
+	return FracAdd(F1, FracOpp(F2))
 
 #Calcul et simplifie le produit de deux fractions
-def FracProd(F1, F2) :  
+def FracProd(F1, F2) :
+	F1=FracPlonge(F1)
+	F2=FracPlonge(F2)
 	res=FracZero()
-	return res
+	res[0]=F1[0]*F2[0]
+	res[1]=F1[1]*F2[1]
+	return FracSimplif(res)
 
 #Calcul l'inverse d'une fraction
-def FracInv(F) : 
+def FracInv(F) :  
+	F=FracPlonge(F)
 	res=FracZero()
+	res[0]=F[1]
+	res[1]=F[0]
 	return res
 
 #Calcul le quotient de fraction
 def FracDiv(F1, F2) : 
-	res=FracZero()
-	return res
+	return FracProd(F1, FracInv(F2))
 	
 	
+"""
 #Pour les tests
 
 X=FracZero()
@@ -155,19 +193,12 @@ Y=FracZero()
 Y[0]=9
 Y[1]=-4
 
-a, b = 59.65, 48.45
-
 print("X="+FracAff(X)+"="+FracAff(FracSimplif(X)))
 print("Y="+FracAff(Y)+"="+FracAff(FracSimplif(Y)))
-print("X = " + str(FracEval(X)))
-print("Y = " + str(FracEval(Y)))
-print("X comp Y = "+ str(FracComp(X, Y)))
-print("Y comp X = "+ str(FracComp(Y, X)))
-print("X comp X = "+ str(FracComp(X, X)))
-print("PGCD(a, b) = " + str(FracPGCD(a, b)))
 print("X+Y="+FracAff(FracAdd(X,Y)))
 print("X-Y="+FracAff(FracSous(X,Y)))
 print("X+1="+FracAff(FracAdd(X,1)))
 print("2Y="+FracAff(FracProd(2,Y)))
 print("2X="+FracAff(FracProd(2,X)))
 print("X^2/Y="+FracAff(FracDiv(FracProd(X,X),Y)))
+#"""
