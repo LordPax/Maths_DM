@@ -94,7 +94,7 @@ def MatAdd(A, B) :
 	if nA == mA and nB == mB and nA == nB :
 		for i in range(nA) :
 			for j in range(nA) :
-				res[i][j] = A[i][j] + B[i][j]
+				res[i][j] = FracAdd(A[i][j], B[i][j])
 	
 	return res
 	
@@ -104,7 +104,7 @@ def MatProdX(A, X) :
 	res = MatZero(nA, mA)
 	for i in range(nA) :
 		for j in range(mA) :
-			res[i][j] += A[i][j] * X
+			res[i][j] = FracProd(A[i][j], X)
 	return res
 	
 #Renvoie l'opposé de la matrice A (OK)
@@ -113,7 +113,7 @@ def MatOpp(A) :
 	res = MatZero(nA, mA)
 	for i in range(nA) :
 		for j in range(mA) :
-			res[i][j] += A[i][j] * -1
+			res[i][j] = FracProd(A[i][j], -1)
 	return res
 	
 #Renvoie la différence de A et B (OK)
@@ -123,7 +123,7 @@ def MatSous(A,B) :
 	if nA == mA and nB == mB and nA == nB :
 		for i in range(nA) :
 			for j in range(nA) :
-				res[i][j] = A[i][j] - B[i][j]
+				res[i][j] = FracSous(A[i][j], B[i][j])
 	
 	return res
 	
@@ -135,10 +135,10 @@ def MatProd(A, B) :
 		for i in range(nA) :
 			for j in range(pB) :
 				for k in range(mA) :
-					res[i][j] += A[i][k] * B[k][j]
+					res[i][j] = FracAdd(res[i][j], FracProd(A[i][k], B[k][j]))
 	return res
 	
-#Renvoie la matrice transposée
+#Renvoie la matrice transposée (OK)
 def MatTransp(A) : 
 	nA, mA = len(A), len(A[0])
 	res = MatZero(nA)
@@ -151,48 +151,81 @@ def MatTransp(A) :
 					res[i][j] = A[i][j]
 	return res
 
-#Renvoie le mineur
+#Renvoie le mineur (OK)
 def MatMineur(A,p,q) : 
 	nA, mA = len(A), len(A[0])
 	nA2 = nA - 1
 	res = MatZero(nA2)
 	if nA == mA :
-		for i in range(nA) :
-			for j in range(nA) :
+		for i in range(nA2) :
+			for j in range(nA2) :
 				if i < p and j < q :
-					res[i][j] = res[i][j]
-				else i < p and j >= q :
-					res[i][j] = res[i][j+1]
-				else i >= p and j < q :
-					res[i][j] = res[i+1][j]
-				else i >= p and j >= q :
-					res[i][j] = res[i+1][j+1]
+					res[i][j] = A[i][j]
+				elif i < p and j >= q :
+					res[i][j] = A[i][j+1]
+				elif i >= p and j < q :
+					res[i][j] = A[i+1][j]
+				elif i >= p and j >= q :
+					res[i][j] = A[i+1][j+1]
+
 	return res
 
-#Calcul le déterminant de A
+#Calcul le déterminant de A (OK)
 def MatDet(A) :
-	return 0
+	nA, mA = len(A), len(A[0])
+	j = 0
+	res = 0
+	if nA == mA :
+		if nA > 2:
+			for i in range(nA) :
+				res = FracAdd(res, FracProd((-1)**(i+j), FracProd(A[i][j], MatDet(MatMineur(A, i, j)))))
+		elif nA == 2 :
+			res = FracSous(FracProd(A[0][0], A[1][1]), FracProd(A[1][0], A[0][1]))
+		elif nA == 1 :
+			res = A[0][0]
+
+	return res
+
+				
 	
-#Renvoie la matrice des cofacteurs de A
+#Renvoie la matrice des cofacteurs de A (OK)
 def MatCofact(A) : 
-	res=MatZero(n)
+	nA, mA = len(A), len(A[0])
+	res = MatZero(nA)
+	if nA == mA :
+		for i in range(nA) :
+			for j in range(nA) :
+				res[i][j] = FracProd((-1)**(i+j), MatDet(MatMineur(A, i, j)))
 	return res
 	
 #Renvoie la matrice inverse (faite)
 def MatInv(A) : 
 	if(not(MatIs(A))) : return "NaN"
-	n=len(A)
-	m=len(A[0])
-	if(m!=n) : return "NaN"
+	n = len(A)
+	m = len(A[0])
+	if(m != n) : return "NaN"
 	
-	d=MatDet(A)
-	if(d==0) : return "NaN"
+	d = MatDet(A)
+	if(d == 0) : return "NaN"
 	
 	return MatProdX(MatTransp(MatCofact(A)), FracInv(d))
 
 #Renvoie le résultat de A^p | p pouvant être négatif
 def MatPuiss(A,p) :
-	return A
+	nA, mA = len(A), len(A[0])
+	res = MatZero(nA)
+	if nA == mA :
+		res = A
+
+		if p < -1 or p > 1 :
+			for k in range(abs(p)) :
+				res = MatProd(res, A)
+		elif p == 0 :
+			res = MatZero(nA)
+
+		if p <= -1 :
+			res = MatInv(res)
+	return res
 	
 
 #Pour les test
@@ -217,13 +250,11 @@ print("opp(M)=\n"+MatAff(MatOpp(M)))
 print("M*Id3=\n"+MatAff(MatProd(M, MatId(3))))
 print("transp(M)=\n"+MatAff(MatTransp(M)))
 print("Id3-M=\n"+MatAff(MatSous(MatId(3),M)))
-#print("Le mineur M1,2 \n"+MatAff(MatMineur(M,0,1)))
-#print("Le mineur M2,2 \n"+MatAff(MatMineur(M,1,1)))
-
-#print("La transposée de M est \n"+MatAff(MatTransp(M)))
-
-#print("det(M)="+FracAff(MatDet(M)))
-#print("L'inverse de M est\n"+MatAff(MatInv(M)))
-#print("M*M^{-1}=\n"+MatAff(MatProd(M,MatInv(M))))
-#print("M^{-1}*M=\n"+MatAff(MatProd(MatInv(M),M)))
-#
+print("Le mineur M1,2 \n"+MatAff(MatMineur(M,0,1)))
+print("Le mineur M2,2 \n"+MatAff(MatMineur(M,1,1)))
+print("det(M)="+FracAff(MatDet(M)))
+print("Co(M)=\n"+MatAff(MatCofact(M)))
+print("L'inverse de M est\n"+MatAff(MatInv(M)))
+print("M^p=\n"+MatAff(MatPuiss(M, -1)))
+print("M*M^{-1}=\n"+MatAff(MatProd(M,MatInv(M))))
+print("M^{-1}*M=\n"+MatAff(MatProd(MatInv(M),M)))
