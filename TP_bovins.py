@@ -91,7 +91,7 @@ Pie = (jaune / 6) / 5
 
 pie2 = 3515820
 noire2 = FracDiv(FracDiv(pie2, 5), 4)
-blanc2= FracDiv(FracDiv(noire2, 4), 3)
+blanc2 = FracDiv(FracDiv(noire2, 4), 3)
 jaune2 = FracDiv(FracDiv(blanc2, 7), 6)
 Pie2 = FracDiv(FracDiv(jaune2, 6), 5)
 
@@ -99,7 +99,7 @@ print("pie = ", pie)
 print("noire = ", noire)
 print("blanc = ", blanc)
 print("jaune = ", jaune)
-print("pie2 = ", Pie)
+print("Pie2 = ", Pie)
 
 print("\n")
 
@@ -107,4 +107,4 @@ print("pie = ", FracAff(pie2))
 print("noire = ", FracAff(noire2))
 print("blanc = ", FracAff(blanc2))
 print("jaune = ", FracAff(jaune2))
-print("pie2 = ", FracAff(Pie2))
+print("Pie2 = ", FracAff(Pie2))
