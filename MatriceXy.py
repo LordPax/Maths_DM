@@ -130,8 +130,8 @@ def MatSous(A,B) :
 #Renvoie le produit A*B (OK)
 def MatProd(A, B) :
 	nA, mA, mB, pB = len(A), len(A[0]), len(B), len(B[0])
-	res = MatZero(mA)
-	if nA == pB and mA == mB :
+	res = MatZero(mA, pB)
+	if nA == pB or mA == mB :
 		for i in range(nA) :
 			for j in range(pB) :
 				for k in range(mA) :
@@ -229,7 +229,7 @@ def MatPuiss(A,p) :
 	
 
 #Pour les test
-M=MatZero(3)
+"""M=MatZero(3)
 M[0][0]=2
 M[0][1]=0
 M[0][2]=-1
@@ -257,4 +257,4 @@ print("Co(M)=\n"+MatAff(MatCofact(M)))
 print("L'inverse de M est\n"+MatAff(MatInv(M)))
 print("M^p=\n"+MatAff(MatPuiss(M, -1)))
 print("M*M^{-1}=\n"+MatAff(MatProd(M,MatInv(M))))
-print("M^{-1}*M=\n"+MatAff(MatProd(MatInv(M),M)))
+print("M^{-1}*M=\n"+MatAff(MatProd(MatInv(M),M)))"""
